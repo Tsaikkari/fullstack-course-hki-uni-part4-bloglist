@@ -9,7 +9,7 @@ const totalLikes = (blogs) => {
 
   let likes = blogs.map(blog => blog.likes)
   console.log(likes)
-  return likes.length === 0
+  return blogs.length === 0
   ? 0
   : likes.reduce(reducer, 0)
 }
