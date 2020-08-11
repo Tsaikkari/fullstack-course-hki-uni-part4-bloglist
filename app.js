@@ -1,6 +1,9 @@
 const express = require('express')
 const app = express()
+const Blog = require('./models/blog')
 const cors = require('cors')
+
+const blogs = []
 
 app.use(cors())
 app.use(express.json())
