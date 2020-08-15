@@ -1,4 +1,5 @@
 const _= require('lodash')
+const { filter } = require('lodash')
 
 const dummy = (blogs) => {
   return blogs.push(1)
@@ -22,22 +23,47 @@ const favoriteBlog = (blogs) => {
 }
 
 const mostBlogs = (blogs) => {
-  let counts = _(blogs).countBy('author')
-  let max = Math.max(...counts)
-  console.log(max)
-  // TODO: fix this
-  const authors = blogs.map(blog => blog.author)
-  const author = authors.find(a => (a * max === true))
-
-  return {
-    author: author,
-    blogs: max
+  const blogList = _(blogs).countBy('author')
+  let max = Math.max(...blogList)
+  const authors = _.groupBy(blogs, 'author')  
+  for (const [author, arr] of Object.entries(authors)) {
+    if (arr.length === max) {
+    blogs.find(b => b === b.author === author)
+      return { author: author, blogs: max } 
+    }
   }
+}
+
+const mostLikes = (blogs) => {
+  const reducer = (sum, item) => {
+    return sum + item
+  }
+
+  const authorList = blogs.map((blog) => ({
+    author: blog.author,
+    likes: blog.likes
+  }))
+
+  const authors = authorList.map(a => a.author)
+  let uniqAuthors = authors.reduce((a, b) => {
+    if (a.indexOf(b) < 0) a.push(b)
+    return a
+  }, [])
+
+  // TODO: Fix this
+  let specificsAuthors = uniqAuthors.forEach(e => {
+    authorList.includes(e) 
+    && authorList.filter(a => a.author === uniqAuthor[e])
+  })
+
+  let likes = specificsAuthors.map(a => a.likes)
+  return likes.reduce(reducer, 0)
 }
 
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  //mostLikes
 }
