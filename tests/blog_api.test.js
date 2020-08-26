@@ -54,40 +54,51 @@ test('a valid blog can be added', async () => {
     .send(newBlog)
     .expect(200)
     .expect('Content-Type', /application\/json/)
+    .catch(error => next(error))
 
   const blogsAtEnd = await helper.blogsInDb()
-  console.log('blogsAtEnd', blogsAtEnd)
-  expect(blogsAtEnd).toHaveLength(helper.initialBlogs + 1)
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
 
   const savedBlog = response.body
-  console.log('savedBlog', savedBlog)
   const contents = { 
     title: savedBlog.title, 
     author: savedBlog.author, 
     url: savedBlog.url, 
-    likes: savedBlog.likes,
+    likes: savedBlog.likes
   }
   expect(newBlog).toEqual(contents)
 })
 
-/*test('blog without title is not added', async () => {
+test('blog without likes gets added with default likes', async () => {
   const newBlog = {
+    title: "The awesome Some",
     author: "Some Author", 
-    url: "http://www.cs.some.html", 
-    likes: 12
+    url: "http://www.cs.some.html"
   }
 
-  await api
+  const response = await api
     .post('/api/blogs')
     .send(newBlog)
-    .expect(400)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+    .catch(error => next(error))
 
-  const response = await api.get('/api/blogs')
-
-  expect(response.body).toHaveLength(initialBlogs.length)
+  const savedBlog = response.body
+  if (!savedBlog.likes) {
+    const contents = {
+      title: savedBlog.title, 
+      author: savedBlog.author, 
+      url: savedBlog.url, 
+      likes: 0
+    }
+    return contents
+  }
+  expect(newBlog).toEqual(contents)
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
 })
 
-test('a specific blog can be viewed', async () => {
+/*test('a specific blog can be viewed', async () => {
   const blogsAtStart = await helper.blogsInDb()
 
   const blogToView = blogsAtStart[0]
@@ -102,7 +113,7 @@ test('a specific blog can be viewed', async () => {
   expect(resultBlog.body).toEqual(processedBlogToView)
 })
 
-test('a blog can be deleted', async () => {
+/*test('a blog can be deleted', async () => {
   const blogsAtStart = await helper.blogsInDb()
   const blogToDelete = blogsAtStart[0]
 
