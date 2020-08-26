@@ -35,13 +35,14 @@ const mostBlogs = (blogs) => {
 
 const mostLikes = (blogs) => {
   const authorGroup = _.groupBy(blogs, 'author')
+  //console.log('AuthorGroup', authorGroup)
   for (const [author, arr] of Object.entries(authorGroup)) {
     // TODO: fix this
     const max = Math.max(...arr.map(a => a.likes).reduce(reducer, 0))
     console.log('max', max)
-    const authorList = blogs.map(() => ({
+    const authorList = authorGroup.map(() => ({
       author: author,
-      likes: max
+      likes: _.sumBy(arr, 'likes')
     }))
     console.log('authorList', authorList) 
   }
