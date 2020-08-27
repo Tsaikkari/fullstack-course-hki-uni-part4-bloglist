@@ -54,7 +54,6 @@ test('a valid blog can be added', async () => {
     .send(newBlog)
     .expect(200)
     .expect('Content-Type', /application\/json/)
-    .catch(error => next(error))
 
   const blogsAtEnd = await helper.blogsInDb()
   expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
@@ -69,7 +68,7 @@ test('a valid blog can be added', async () => {
   expect(newBlog).toEqual(contents)
 })
 
-test('blog without likes gets added with default likes', async () => {
+test('blog without likes gets added with default value', async () => {
   const newBlog = {
     title: "The awesome Some",
     author: "Some Author", 
@@ -81,21 +80,34 @@ test('blog without likes gets added with default likes', async () => {
     .send(newBlog)
     .expect(200)
     .expect('Content-Type', /application\/json/)
-    .catch(error => next(error))
 
   const savedBlog = response.body
-  if (!savedBlog.likes) {
     const contents = {
       title: savedBlog.title, 
       author: savedBlog.author, 
       url: savedBlog.url, 
       likes: 0
-    }
-    return contents
   }
+  
   expect(newBlog).toEqual(contents)
   const blogsAtEnd = await helper.blogsInDb()
   expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
+})
+
+test('blog without title and url is not added', async () => {
+  const newBlog = {
+    author: "A. Writer",
+    likes: 5
+  }
+
+  await api 
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+  
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(initialBlogs.length)
 })
 
 /*test('a specific blog can be viewed', async () => {

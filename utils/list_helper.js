@@ -35,19 +35,22 @@ const mostBlogs = (blogs) => {
 
 const mostLikes = (blogs) => {
   const authorGroup = _.groupBy(blogs, 'author')
-  //console.log('AuthorGroup', authorGroup)
-  for (const [author, arr] of Object.entries(authorGroup)) {
-    // TODO: fix this
-    const max = Math.max(...arr.map(a => a.likes).reduce(reducer, 0))
-    console.log('max', max)
-    const authorList = authorGroup.map(() => ({
-      author: author,
-      likes: _.sumBy(arr, 'likes')
+  const authorLikes = []
+  
+  for (const [author, blogs] of Object.entries(authorGroup)) {
+    let likes = 0
+    const authorBlogs = blogs.map((b) => ({
+      author: b.author,
+      likes: likes += b.likes
     }))
-    console.log('authorList', authorList) 
+    // last object in each author's array has the sum of the likes of the author's blogs
+    authorLikes.push(authorBlogs.pop())
+    console.log('authorLikes', authorLikes)
+    const orderedList =  _.orderBy(authorLikes, ['likes'], ['asc'])
+    let result = orderedList.pop()
+    console.log('result', result)
+    // return result
   }
-    /*let max = Object.keys(likesGroup).reduce((a, b) => likesGroup[a] > likesGroup[b] ? a : b);
-    console.log('max', max)*/
 }
   
 module.exports = {
