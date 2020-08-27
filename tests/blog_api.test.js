@@ -4,6 +4,7 @@ const helper = require('./test_helper')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const { blogsInDb, initialBlogs } = require('./test_helper')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -80,20 +81,26 @@ test('blog without likes gets added with default value', async () => {
     .send(newBlog)
     .expect(200)
     .expect('Content-Type', /application\/json/)
-
+  // TODO: fix this
   const savedBlog = response.body
-    const contents = {
-      title: savedBlog.title, 
-      author: savedBlog.author, 
-      url: savedBlog.url, 
-      likes: 0
-  }
-  
-  expect(newBlog).toEqual(contents)
+  const blogs = await helper.blogsInDb() 
+  const result = blogs.map(b => {
+    b.likes
+    if (!b.likes) {
+      return {
+        title: savedBlog.title, 
+        author: savedBlog.author, 
+        url: savedBlog.url, 
+        likes: 0
+      }
+    }
+  })
+
+  expect(newBlog).toEqual(result)
   const blogsAtEnd = await helper.blogsInDb()
   expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
 })
-
+// TODO: fix error 500
 test('blog without title and url is not added', async () => {
   const newBlog = {
     author: "A. Writer",
