@@ -81,20 +81,14 @@ test('blog without likes gets added with default value', async () => {
     .send(newBlog)
     .expect(200)
     .expect('Content-Type', /application\/json/)
-  // TODO: fix this
+  
   const savedBlog = response.body
-  const blogs = await helper.blogsInDb() 
-  const result = blogs.map(b => {
-    return !b.likes 
-    &&
-      {
-      title: savedBlog.title, 
-      author: savedBlog.author, 
-      url: savedBlog.url, 
-      likes: 0
-      }
-  })
-
+  const result = {
+    title: savedBlog.title, 
+    author: savedBlog.author, 
+    url: savedBlog.url, 
+    likes: Blog.likes
+  }
   expect(newBlog).toEqual(result)
   const blogsAtEnd = await helper.blogsInDb()
   expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
