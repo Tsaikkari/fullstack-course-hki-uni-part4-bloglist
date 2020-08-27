@@ -85,15 +85,14 @@ test('blog without likes gets added with default value', async () => {
   const savedBlog = response.body
   const blogs = await helper.blogsInDb() 
   const result = blogs.map(b => {
-    b.likes
-    if (!b.likes) {
-      return {
-        title: savedBlog.title, 
-        author: savedBlog.author, 
-        url: savedBlog.url, 
-        likes: 0
+    return !b.likes 
+    &&
+      {
+      title: savedBlog.title, 
+      author: savedBlog.author, 
+      url: savedBlog.url, 
+      likes: 0
       }
-    }
   })
 
   expect(newBlog).toEqual(result)
