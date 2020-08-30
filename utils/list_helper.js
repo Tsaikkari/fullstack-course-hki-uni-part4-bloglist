@@ -33,23 +33,24 @@ const mostBlogs = (blogs) => {
   }
 }
 
+// TODO: should return the same result that console.log prints, 4.7*
 const mostLikes = (blogs) => {
   const authorGroup = _.groupBy(blogs, 'author')
   const authorLikes = []
   
   for (const [author, blogs] of Object.entries(authorGroup)) {
     let likes = 0
-    const authorBlogs = blogs.map((b) => ({
-      author: b.author,
-      likes: likes += b.likes
-    }))
-    // last object in each author's array has the sum of the likes of the author's blogs
-    authorLikes.push(authorBlogs.pop())
+    blogs.forEach((b) => 
+      authorLikes.push({ author, likes: likes += b.likes })
+    )
+    
     console.log('authorLikes', authorLikes)
     const orderedList =  _.orderBy(authorLikes, ['likes'], ['asc'])
-    let result = orderedList.pop()
+    /* get last item in the array */
+    let x = orderedList.length - 1
+    let result = orderedList[x]
     console.log('result', result)
-    // return result
+    //return result
   }
 }
   
